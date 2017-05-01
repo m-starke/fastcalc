@@ -20,9 +20,11 @@ public class DigitInputListener extends View implements View.OnClickListener {
         TextView input = (TextView) this.main_view.findViewById(R.id.tvSecondSummand);
 
         if (input.getText().length() > 4 && v.getId() != R.id.btnDelete) {
+            // maybe also collect training data here, but is it necessary?
             return;
         }
 
+        // collect training data here ...
         switch (v.getId()) {
             case R.id.btn0:
                 input.setText(input.getText() + "0");
