@@ -1,17 +1,24 @@
 package at.tugraz.embsec.fastcalc;
 
 import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
 
-public class DigitInputListener extends View implements View.OnClickListener {
+public class InputListener extends View implements View.OnClickListener, SensorEventListener {
 
     private View main_view;
+    private SensorManager sm;
 
-    public DigitInputListener(Context context, View main) {
+    public InputListener(Context context, View main, AppCompatActivity activity) {
         super(context);
         this.main_view = main;
+        this.sm = (SensorManager) activity.getSystemService(activity.SENSOR_SERVICE);
     }
 
     @Override
@@ -63,4 +70,16 @@ public class DigitInputListener extends View implements View.OnClickListener {
                 break;
         }
     }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+
+    }
+
+
 }

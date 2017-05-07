@@ -2,8 +2,6 @@ package at.tugraz.embsec.fastcalc;
 
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
-import android.hardware.Sensor;
-import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -12,7 +10,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.List;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
@@ -34,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         // initialize grid layout buttons
         for (int i = 0; i < btn.length; i++) {
             btn[i] = (Button) findViewById(btn_id[i]);
-            btn[i].setOnClickListener(new DigitInputListener(getApplicationContext(), findViewById(android.R.id.content)));
+            btn[i].setOnClickListener(new InputListener(getApplicationContext(), findViewById(android.R.id.content), this));
         }
 
         createEquation();
@@ -74,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
             // check if equation was correct
             valid = checkEquation();
         } catch (NumberFormatException e) {
-            t = Toast.makeText(getApplicationContext(), "Please enter a numer!", Toast.LENGTH_SHORT);
+            t = Toast.makeText(getApplicationContext(), "Please enter a number!", Toast.LENGTH_SHORT);
             t.setGravity(Gravity.TOP, 0, 125);
             t.getView().setBackgroundColor(Color.rgb(255, 50, 50));
             t.show();
@@ -96,14 +93,43 @@ public class MainActivity extends AppCompatActivity {
         // create new equation
         createEquation();
 
-        // TODO: sensor testing
+        // sensor testing
+        /*
         SensorManager smngr = (SensorManager) this.getSystemService(this.SENSOR_SERVICE);
-        List<Sensor> sensorlst = smngr.getSensorList(Sensor.TYPE_ALL);
+
+        // ALL HARDWARE SENSORS
+        List<Sensor> sensorlst = smngr.getSensorList(Sensor.TYPE_ACCELEROMETER); // LSM330DLC 3-axis Accelerometer
         StringBuilder sb = new StringBuilder();
         for (Sensor s : sensorlst) {
             sb.append(s.getName());
             sb.append("\n");
         }
-        Toast.makeText(getApplicationContext(), sb.toString(), Toast.LENGTH_LONG).show();
+        Log.d("SENSOR INFO", sb.toString());
+
+        sensorlst = smngr.getSensorList(Sensor.TYPE_GYROSCOPE); // LSM330DLC Gyroscope sensor
+                                                                // Uncalibrated Gyroscope Sensor
+                                                                // Corrected Gyroscope Sensor
+        sb = new StringBuilder();
+        for (Sensor s : sensorlst) {
+            sb.append(s.getName());
+            sb.append("\n");
+        }
+        Log.d("SENSOR INFO", sb.toString());
+
+        sensorlst = smngr.getSensorList(Sensor.TYPE_LIGHT); // CM36651 Light sensor
+        sb = new StringBuilder();
+        for (Sensor s : sensorlst) {
+            sb.append(s.getName());
+            sb.append("\n");
+        }
+        Log.d("SENSOR INFO", sb.toString());
+
+        // not allowed sensors
+        //smngr.getSensorList(Sensor.TYPE_MAGNETIC_FIELD);
+        //smngr.getSensorList(Sensor.TYPE_PROXIMITY);
+        //smngr.getSensorList(Sensor.TYPE_PRESSURE);
+        //smngr.getSensorList(Sensor.TYPE_GRAVITY);
+
+        */
     }
 }
