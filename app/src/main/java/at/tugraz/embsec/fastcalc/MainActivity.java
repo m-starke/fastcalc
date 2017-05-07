@@ -2,6 +2,8 @@ package at.tugraz.embsec.fastcalc;
 
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -10,6 +12,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.List;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
@@ -92,5 +95,15 @@ public class MainActivity extends AppCompatActivity {
 
         // create new equation
         createEquation();
+
+        // TODO: sensor testing
+        SensorManager smngr = (SensorManager) this.getSystemService(this.SENSOR_SERVICE);
+        List<Sensor> sensorlst = smngr.getSensorList(Sensor.TYPE_ALL);
+        StringBuilder sb = new StringBuilder();
+        for (Sensor s : sensorlst) {
+            sb.append(s.getName());
+            sb.append("\n");
+        }
+        Toast.makeText(getApplicationContext(), sb.toString(), Toast.LENGTH_LONG).show();
     }
 }
