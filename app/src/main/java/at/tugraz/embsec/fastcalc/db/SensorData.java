@@ -130,4 +130,20 @@ public class SensorData {
 
         return cv;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(this.btn);
+        sb.append(" ");
+        sb.append(this.acc_x + " " + this.acc_y + " " + this.acc_z);
+        sb.append(" ");
+        sb.append(this.gyr_x + " " + this.gyr_y + " " + this.gyr_z);
+        sb.append(" ");
+        sb.append(this.lgt_a + " " + lgt_b);
+        sb.append("\n");
+
+        return sb.toString();
+    }
 }

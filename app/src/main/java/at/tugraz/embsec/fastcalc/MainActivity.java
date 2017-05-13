@@ -2,6 +2,7 @@ package at.tugraz.embsec.fastcalc;
 
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -10,6 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
@@ -35,6 +37,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         createEquation();
+
+        // view the storage location
+        //Toast.makeText(this, (new File(Environment.getDataDirectory(), "sensor_data.txt")).getAbsolutePath(), Toast.LENGTH_LONG).show();
     }
 
     public void createEquation() {

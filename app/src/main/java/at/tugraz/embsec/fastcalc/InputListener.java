@@ -13,8 +13,11 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+
 import at.tugraz.embsec.fastcalc.db.DatabaseHelper;
 import at.tugraz.embsec.fastcalc.db.SensorData;
+import at.tugraz.embsec.fastcalc.io.DataWriter;
 
 
 public class InputListener extends View implements View.OnClickListener, SensorEventListener {
@@ -24,15 +27,19 @@ public class InputListener extends View implements View.OnClickListener, SensorE
     private MainActivity main_activity;
     private SensorManager sm;
 
+    private static String FILENAME = "sensor_data.txt";
+
     private static int MAX_DIGITS = 4;
 
     public static SensorData SENSORDATA;
 
-    private static DatabaseHelper DATABASE;
 
-    private static String DB_RESET_CODE = "3333";
-    private static String DB_LAST_ROW_CODE = "1337";
-    private static String DB_ROW_COUNT_CODE = "1338";
+    //private static DatabaseHelper DATABASE;
+
+    private static String RESET_CODE = "3333";
+    private static String LAST_ROW_CODE = "1337";
+    private static String ROW_COUNT_CODE = "1338";
+
 
     public InputListener(Context context, View main, AppCompatActivity activity) {
         super(context);
@@ -45,9 +52,11 @@ public class InputListener extends View implements View.OnClickListener, SensorE
             InputListener.SENSORDATA = new SensorData();
         }
 
+        /*
         if (InputListener.DATABASE == null) {
             InputListener.DATABASE = new DatabaseHelper(context);
         }
+        */
     }
 
     @Override
@@ -106,7 +115,8 @@ public class InputListener extends View implements View.OnClickListener, SensorE
                 break;
             case R.id.btnDelete:
                 if (input.getText().length() > 0) {
-                    if (input.getText().equals(InputListener.DB_RESET_CODE)) { // reset database
+                    /*
+                    if (input.getText().equals(InputListener.RESET_CODE)) { // reset database
                         InputListener.DATABASE.resetDatabase();
                         Toast t = Toast.makeText(this.main_context, "Database was cleared!", Toast.LENGTH_LONG);
                         t.setGravity(Gravity.TOP, 0, 125);
@@ -114,7 +124,7 @@ public class InputListener extends View implements View.OnClickListener, SensorE
                         t.show();
                         this.main_activity.createEquation();
                         return;
-                    } else if (input.getText().equals(InputListener.DB_LAST_ROW_CODE)) { // information about last row
+                    } else if (input.getText().equals(InputListener.LAST_ROW_CODE)) { // information about last row
                         String entry = InputListener.DATABASE.getLastEntry();
                         Toast t = Toast.makeText(this.main_context, entry, Toast.LENGTH_LONG);
                         t.setGravity(Gravity.TOP, 0, 125);
@@ -122,7 +132,7 @@ public class InputListener extends View implements View.OnClickListener, SensorE
                         t.show();
                         this.main_activity.createEquation();
                         return;
-                    } else if (input.getText().equals(InputListener.DB_ROW_COUNT_CODE)) { // information about row count
+                    } else if (input.getText().equals(InputListener.ROW_COUNT_CODE)) { // information about row count
                         String rowcount = "Rows in database: " + InputListener.DATABASE.getRowCount();
                         Toast t = Toast.makeText(this.main_context, rowcount, Toast.LENGTH_LONG);
                         t.setGravity(Gravity.TOP, 0, 125);
@@ -130,9 +140,15 @@ public class InputListener extends View implements View.OnClickListener, SensorE
                         t.show();
                         this.main_activity.createEquation();
                         return;
-                    }
+                    */
+                    if (input.getText().equals(InputListener.RESET_CODE)) {
+                        DataWriter.clearFile(this.main_context, InputListener.FILENAME);
+                        this.main_activity.createEquation();
+                        return;
+                    } else {
 
-                    input.setText(input.getText().subSequence(0, input.getText().length() - 1));
+                        input.setText(input.getText().subSequence(0, input.getText().length() - 1));
+                    }
                 }
                 return; // not necessary to attach sensor listener
         }
@@ -179,11 +195,12 @@ public class InputListener extends View implements View.OnClickListener, SensorE
         // check if SensorData is fully populated and write to database
         if (InputListener.SENSORDATA.isReadyToCommit()) {
 
-            InputListener.DATABASE.storeSensorData(InputListener.SENSORDATA);
-            Log.d("InputListener", "Wrote SensorData to database!");
+            //InputListener.DATABASE.storeSensorData(InputListener.SENSORDATA);
+            DataWriter dw = new DataWriter(this.main_context, InputListener.FILENAME, InputListener.SENSORDATA);
+            dw.run();
+            Log.d("InputListener", "Wrote SensorData to file!");
             InputListener.SENSORDATA = new SensorData();
         }
     }
-
 
 }
