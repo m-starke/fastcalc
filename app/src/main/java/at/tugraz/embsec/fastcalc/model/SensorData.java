@@ -1,4 +1,4 @@
-package at.tugraz.embsec.fastcalc.db;
+package at.tugraz.embsec.fastcalc.model;
 
 
 import android.content.ContentValues;
@@ -40,6 +40,19 @@ public class SensorData {
         this.gyr_z = null;
         this.lgt_a = null;
         this.lgt_b = null;
+    }
+
+    // copy constructor used for writing in new thread
+    public SensorData(SensorData sd) {
+        this.btn = sd.getBtn();
+        this.acc_x = sd.getAcc_x();
+        this.acc_y = sd.getAcc_y();
+        this.acc_z = sd.getAcc_z();
+        this.gyr_x = sd.getGyr_x();
+        this.gyr_y = sd.getGyr_y();
+        this.gyr_z = sd.getGyr_z();
+        this.lgt_a = sd.getLgt_a();
+        this.lgt_b = sd.getLgt_b();
     }
 
     public Integer getId() {
@@ -136,12 +149,12 @@ public class SensorData {
         StringBuilder sb = new StringBuilder();
 
         sb.append(this.btn);
-        sb.append(" ");
-        sb.append(this.acc_x + " " + this.acc_y + " " + this.acc_z);
-        sb.append(" ");
-        sb.append(this.gyr_x + " " + this.gyr_y + " " + this.gyr_z);
-        sb.append(" ");
-        sb.append(this.lgt_a + " " + lgt_b);
+        sb.append("; ");
+        sb.append((double)this.acc_x + "; " + (double)this.acc_y + "; " + (double)this.acc_z);
+        sb.append("; ");
+        sb.append((double)this.gyr_x + "; " + (double)this.gyr_y + "; " + (double)this.gyr_z);
+        sb.append("; ");
+        sb.append((double)this.lgt_a + "; " + (double)this.lgt_b);
         sb.append("\n");
 
         return sb.toString();

@@ -4,12 +4,14 @@ import android.content.Context;
 import android.os.Environment;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import at.tugraz.embsec.fastcalc.db.SensorData;
+import at.tugraz.embsec.fastcalc.model.SensorData;
 
 
 public class DataWriter implements Runnable {
@@ -19,9 +21,12 @@ public class DataWriter implements Runnable {
     String filepath;
     SensorData sensor_data;
 
+    public static File DIRECTORY = Environment.getExternalStorageDirectory();
+
+
     public DataWriter(Context context, String filename, SensorData data) {
         this.context = context;
-        this.filepath = (new File(Environment.getDataDirectory(), filename)).getAbsolutePath();
+        this.filepath = (new File(DataWriter.DIRECTORY, filename)).getAbsolutePath();
         this.sensor_data = data;
     }
 
@@ -42,15 +47,22 @@ public class DataWriter implements Runnable {
             return;
         }
 
+        //Log.d("DataWriter", Thread.currentThread().getId() + ": Wrote SensorData to file!");
     }
 
-    public static void clearFile(Context context, String filename) {
-        try {
-            FileWriter fw = new FileWriter((new File(Environment.getDataDirectory(), filename)).getAbsolutePath(), false);
-            fw.write("");
-            fw.close();
-        } catch (IOException e) {
-            Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+    public static synchronized void clearFile(String filename) throws IOException {
+        FileWriter fw = new FileWriter((new File(DataWriter.DIRECTORY, filename)).getAbsolutePath(), false); // do not append, replace
+        fw.write("");
+        fw.close();
+    }
+
+    public static synchronized int getRowCount(String filename) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(new File(DataWriter.DIRECTORY, filename)));
+        int lines = 0;
+        while (reader.readLine() != null) {
+            lines++;
         }
+        reader.close();
+        return lines;
     }
 }

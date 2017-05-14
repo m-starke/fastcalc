@@ -7,16 +7,14 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
+import java.io.IOException;
 
-import at.tugraz.embsec.fastcalc.db.DatabaseHelper;
-import at.tugraz.embsec.fastcalc.db.SensorData;
+import at.tugraz.embsec.fastcalc.model.SensorData;
 import at.tugraz.embsec.fastcalc.io.DataWriter;
 
 
@@ -142,9 +140,35 @@ public class InputListener extends View implements View.OnClickListener, SensorE
                         return;
                     */
                     if (input.getText().equals(InputListener.RESET_CODE)) {
-                        DataWriter.clearFile(this.main_context, InputListener.FILENAME);
-                        this.main_activity.createEquation();
-                        return;
+                        Toast t = Toast.makeText(this.main_context, InputListener.FILENAME + " was cleared!", Toast.LENGTH_LONG);
+
+                        try {
+                            DataWriter.clearFile(InputListener.FILENAME);
+                        } catch (IOException e) {
+                            t = Toast.makeText(this.main_context, e.getMessage(), Toast.LENGTH_LONG);
+                        } finally {
+                            t.setGravity(Gravity.TOP, 0, 125);
+                            t.getView().setBackgroundColor(Color.rgb(178, 102, 255));
+                            t.show();
+                            this.main_activity.createEquation();
+                            return;
+                        }
+
+                    } else if (input.getText().equals(InputListener.ROW_COUNT_CODE)) {
+                        Toast t = Toast.makeText(this.main_context, "", Toast.LENGTH_LONG);
+
+                        try {
+                            int lines = DataWriter.getRowCount(InputListener.FILENAME);
+                            t = Toast.makeText(this.main_context, "Row count: " + lines, Toast.LENGTH_LONG);
+                        } catch (IOException e) {
+                            t = Toast.makeText(this.main_context, e.getMessage(), Toast.LENGTH_LONG);
+                        } finally {
+                            t.setGravity(Gravity.TOP, 0, 125);
+                            t.getView().setBackgroundColor(Color.rgb(178, 102, 255));
+                            t.show();
+                            this.main_activity.createEquation();
+                            return;
+                        }
                     } else {
 
                         input.setText(input.getText().subSequence(0, input.getText().length() - 1));
@@ -170,21 +194,21 @@ public class InputListener extends View implements View.OnClickListener, SensorE
 
         switch(event.sensor.getType()) {
             case Sensor.TYPE_ACCELEROMETER: // x, y, z
-                ((TextView) this.main_view.findViewById(R.id.tv_accdata)).setText("" + event.values[0]);
+                //((TextView) this.main_view.findViewById(R.id.tv_accdata)).setText("" + event.values[0]);
 
                 InputListener.SENSORDATA.setAcc(event.values[0], event.values[1], event.values[2]);
 
                 this.sm.unregisterListener(this, this.sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER));
                 break;
             case Sensor.TYPE_GYROSCOPE: // x, y, z
-                ((TextView) this.main_view.findViewById(R.id.tv_gyrodata)).setText("" + event.values[0]);
+                //((TextView) this.main_view.findViewById(R.id.tv_gyrodata)).setText("" + event.values[0]);
 
                 InputListener.SENSORDATA.setGyr(event.values[0], event.values[1], event.values[2]);
 
                 this.sm.unregisterListener(this, this.sm.getDefaultSensor(Sensor.TYPE_GYROSCOPE));
                 break;
             case Sensor.TYPE_LIGHT: // ?, ?, 0.0
-                ((TextView) this.main_view.findViewById(R.id.tv_lightdata)).setText("" + event.values[0]);
+                //((TextView) this.main_view.findViewById(R.id.tv_lightdata)).setText("" + event.values[0]);
 
                 InputListener.SENSORDATA.setLgt(event.values[0], event.values[1]);
 
@@ -196,10 +220,16 @@ public class InputListener extends View implements View.OnClickListener, SensorE
         if (InputListener.SENSORDATA.isReadyToCommit()) {
 
             //InputListener.DATABASE.storeSensorData(InputListener.SENSORDATA);
+
+            // without new thread
             DataWriter dw = new DataWriter(this.main_context, InputListener.FILENAME, InputListener.SENSORDATA);
             dw.run();
-            Log.d("InputListener", "Wrote SensorData to file!");
             InputListener.SENSORDATA = new SensorData();
+
+            // with new thread and copy SensorData object to instantly create a new one
+            //Thread t = new Thread(new DataWriter(this.main_context, InputListener.FILENAME, new SensorData(InputListener.SENSORDATA)));
+            //t.start();
+            //InputListener.SENSORDATA = new SensorData();
         }
     }
 

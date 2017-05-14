@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -38,8 +39,11 @@ public class MainActivity extends AppCompatActivity {
 
         createEquation();
 
+        // PULL DATA with adb pull /sdcard/sensor_data.txt
+
         // view the storage location
-        //Toast.makeText(this, (new File(Environment.getDataDirectory(), "sensor_data.txt")).getAbsolutePath(), Toast.LENGTH_LONG).show();
+        // /storage/emulated/0/sensor_data.txt
+        //Toast.makeText(this, (new File(Environment.getExternalStorageDirectory(), "sensor_data.txt")).getAbsolutePath(), Toast.LENGTH_LONG).show();
     }
 
     public void createEquation() {
