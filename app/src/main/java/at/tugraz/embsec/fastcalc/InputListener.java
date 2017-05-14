@@ -155,7 +155,7 @@ public class InputListener extends View implements View.OnClickListener, SensorE
                         }
 
                     } else if (input.getText().equals(InputListener.ROW_COUNT_CODE)) {
-                        Toast t = Toast.makeText(this.main_context, "", Toast.LENGTH_LONG);
+                        Toast t = null;
 
                         try {
                             int lines = DataWriter.getRowCount(InputListener.FILENAME);
@@ -163,9 +163,11 @@ public class InputListener extends View implements View.OnClickListener, SensorE
                         } catch (IOException e) {
                             t = Toast.makeText(this.main_context, e.getMessage(), Toast.LENGTH_LONG);
                         } finally {
-                            t.setGravity(Gravity.TOP, 0, 125);
-                            t.getView().setBackgroundColor(Color.rgb(178, 102, 255));
-                            t.show();
+                            if (t != null) {
+                                t.setGravity(Gravity.TOP, 0, 125);
+                                t.getView().setBackgroundColor(Color.rgb(178, 102, 255));
+                                t.show();
+                            }
                             this.main_activity.createEquation();
                             return;
                         }
